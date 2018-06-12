@@ -17,11 +17,11 @@ class robot:
     
     def set(self, new_x, new_y, new_orientation):
         if new_x < 0 or new_x >= world_size:
-            raise ValueError, 'X coordinate out of bound'
+            raise (ValueError('X coordinate out of bound'))
         if new_y < 0 or new_y >= world_size:
-            raise ValueError, 'Y coordinate out of bound'
+            raise (ValueError( 'Y coordinate out of bound'))
         if new_orientation < 0 or new_orientation >= 2 * pi:
-            raise ValueError, 'Orientation must be in [0..2pi]'
+            raise (ValueError('Orientation must be in [0..2pi]'))
         self.x = float(new_x)
         self.y = float(new_y)
         self.orientation = float(new_orientation)
@@ -30,9 +30,9 @@ class robot:
     def set_noise(self, new_f_noise, new_t_noise, new_s_noise):
         # makes it possible to change the noise parameters
         # this is often useful in particle filters
-        self.forward_noise = float(new_f_noise);
-        self.turn_noise    = float(new_t_noise);
-        self.sense_noise   = float(new_s_noise);
+        self.forward_noise = float(new_f_noise)
+        self.turn_noise    = float(new_t_noise)
+        self.sense_noise   = float(new_s_noise)
     
     
     def sense(self):
@@ -46,7 +46,7 @@ class robot:
     
     def move(self, turn, forward):
         if forward < 0:
-            raise ValueError, 'Robot cant move backwards'         
+            raise (ValueError('Robot cant move backwards'))         
         
         # turn, and add randomness to the turning command
         orientation = self.orientation + float(turn) + random.gauss(0.0, self.turn_noise)
@@ -82,7 +82,7 @@ class robot:
         return prob
       
     def __repr__(self):
-        return '[x=%.6s y=%.6s orient=%.6s]' % (str(self.x), str(self.y), str(self.orientation))
+        return ('[x=%.6s y=%.6s orient=%.6s]' % (str(self.x), str(self.y), str(self.orientation)))
 
 
 
