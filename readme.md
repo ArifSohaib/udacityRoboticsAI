@@ -13,8 +13,12 @@ implements 2D Kalman filter
 TODO: Visualization
 
 ##### particle_filter.py
-third programming project of course.
+basic particle filter in 2d that moves in straight lines
 implements particle filter. 
+
+##### circular_particle_filter.py
+third programming project of course
+implements particle filter that can do rotation
 
 ###### My Addition:
 TODO: Visualization
