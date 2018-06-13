@@ -65,6 +65,7 @@ def localize(colors,measurements,motions,sensor_right,p_move):
         p = sense(p,colors, sensor_right, measurements[i])
         #print max estimated positions
         p = np.array(p)
+        print(p.argmax())
         # print("estimated position: {}".format(np.unravel_index(p.argmax(),p.shape)))
         im = plt.imshow(p, animated=True)
         imgs.append([im])
@@ -83,22 +84,35 @@ def main():
     #  [0.00910, 0.00715, 0.01434, 0.04313, 0.03642]]
     # (within a tolerance of +/- 0.001 for each entry)
 
-    colors = [['R','G','G','R','R'],
-          ['R','R','G','R','R'],
-          ['R','R','G','G','R'],
-          ['R','R','R','R','R']]
-    measurements = ['G','G','G','G','G']
-    motions = [[0,0],[0,1],[1,0],[1,0],[0,1]]
-    p, imgs = localize(colors,measurements,motions,sensor_right = 0.7, p_move = 0.8)
-    show(p) # displays your answer
+    # colors = [['R','G','G','R','R'],
+    #       ['R','R','G','R','R'],
+    #       ['R','R','G','G','R'],
+    #       ['R','R','R','R','R']]
+    # measurements = ['G','G','G','G','G']
+    # motions = [[0,0],[0,1],[1,0],[1,0],[0,1]]
+    # p, imgs = localize(colors,measurements,motions,sensor_right = 0.7, p_move = 0.8)
+
+    # show(p) # displays your answer
     #print final position
-    # p = np.array(p)
-    # print(np.unravel_index(p.argmax(),[4,5]))
-    # plt.imshow(p, interpolation='nearest')
+    #make a larger world and more measurements for visualization
+    colors = np.random.randint(0,2,(100,100)).tolist()
+    for row in range(len(colors)):
+        for col in range(len(colors[row])):
+            if (colors[row][col]== 1):
+                colors[row][col] = 'R'
+            else:
+                colors[row][col] = 'G'
+    measurements = np.random.randint(low=0,high=2,size=100).tolist()
+    measurements = list(map(lambda x: 'R' if x == 1 else 'G', measurements))
+    motions = np.random.randint(low=0, high=2, size=(100,2)).tolist()
+    p, imgs = localize(colors, measurements, motions, sensor_right=0.6,p_move=0.8)
+    # show(p)
+    # fig = plt.figure()
+    #5 images with an interval of 100 milliseconds repeating every 500 milliseconds
+    # ani = animation.ArtistAnimation(fig,imgs,interval=50, blit=True, repeat_delay=1000)
+    # print(imgs[0])
+    # print(type(imgs[0]))
     # plt.show()
-    fig = plt.figure()
-    ani = animation.ArtistAnimation(fig,imgs)
-    plt.show()
 if __name__ == '__main__':
     main()
     
