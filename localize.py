@@ -54,23 +54,36 @@ def move(p, U, moveProb):
     return q
 
 def localize(colors,measurements,motions,sensor_right,p_move):
+    """
+    returns the probablities p
+    args:
+        colors: 2D matrix representing the world with 'G' or 'R' at each value colors[i][j]
+        measurements: observations represented as a vector of wither 'R' or 'G at each measurements[i]
+        motions: motion in x and y direction represented as a vector where each motions[i] is is a list of size 2 with each value being 1 or 0
+        sensor_right: probablity that sensor is correct
+        p_move: probablity that move will be successful
+    returns:
+        p: probablity for each [i][j] value in colors at final step
+        posList: list of maximum probablity position in terms of [x,y] at each motion step
+    """
     # initializes p to a uniform distribution over a grid of the same dimensions as colors
     pinit = 1.0 / float(len(colors)) / float(len(colors[0]))
     p = [[pinit for row in range(len(colors[0]))] for col in range(len(colors))]
     #list to store images for animation
-    imgs = []
-    # >>> Insert your code here <<<
+    posList = []
     for i in range(len(measurements)):
         p = move(p, motions[i],p_move)
         p = sense(p,colors, sensor_right, measurements[i])
         #print max estimated positions
         p = np.array(p)
-        print(p.argmax())
-        # print("estimated position: {}".format(np.unravel_index(p.argmax(),p.shape)))
-        im = plt.imshow(p, animated=True)
-        imgs.append([im])
-    return p, imgs
+        loc = np.unravel_index(p.argmax(),p.shape)
+        # print("estimated position: {}".format(loc))
+        posList.append(loc)
+        # im = plt.imshow(p, animated=True)
+        # imgs.append([im])
+    return p, posList
 
+            
 def show(p):
     rows = ['[' + ','.join(map(lambda x: '{0:.5f}'.format(x),r)) + ']' for r in p]
     print ('[' + ',\n '.join(rows) + ']')
@@ -95,24 +108,28 @@ def main():
     # show(p) # displays your answer
     #print final position
     #make a larger world and more measurements for visualization
-    colors = np.random.randint(0,2,(100,100)).tolist()
-    for row in range(len(colors)):
-        for col in range(len(colors[row])):
-            if (colors[row][col]== 1):
-                colors[row][col] = 'R'
-            else:
-                colors[row][col] = 'G'
-    measurements = np.random.randint(low=0,high=2,size=100).tolist()
+    from data_generator import create_world
+    x_size = 60
+    y_size = 60
+    image, colors = create_world(x_size,y_size)
+
+    measurements = np.random.randint(low=0,high=2,size=x_size).tolist()
     measurements = list(map(lambda x: 'R' if x == 1 else 'G', measurements))
-    motions = np.random.randint(low=0, high=2, size=(100,2)).tolist()
-    p, imgs = localize(colors, measurements, motions, sensor_right=0.6,p_move=0.8)
-    # show(p)
-    # fig = plt.figure()
+    motions = np.random.randint(low=0, high=2, size=(x_size,2)).tolist()
+    p, positions = localize(colors, measurements, motions, sensor_right=0.8,p_move=0.8)
+    imgs = []
+    for pos in positions:
+        img = np.copy(image)
+        img[pos[0]][pos[1]] = [255.,255.,255.]
+        img = plt.imshow(img, animated=True)
+        imgs.append([img])
+    print(len(imgs))
+    fig = plt.figure()
     #5 images with an interval of 100 milliseconds repeating every 500 milliseconds
-    # ani = animation.ArtistAnimation(fig,imgs,interval=50, blit=True, repeat_delay=1000)
-    # print(imgs[0])
-    # print(type(imgs[0]))
-    # plt.show()
+    
+    ani = animation.ArtistAnimation(fig, imgs, interval=50, blit=True, repeat_delay=1000)
+    # ani.save('dynamic_images.mp4')
+    plt.show()
 if __name__ == '__main__':
     main()
     
