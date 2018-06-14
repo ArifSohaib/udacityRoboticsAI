@@ -109,27 +109,36 @@ def main():
     #print final position
     #make a larger world and more measurements for visualization
     from data_generator import create_world
-    x_size = 60
-    y_size = 60
+    x_size = 10
+    y_size = 10
     image, colors = create_world(x_size,y_size)
 
     measurements = np.random.randint(low=0,high=2,size=x_size).tolist()
     measurements = list(map(lambda x: 'R' if x == 1 else 'G', measurements))
     motions = np.random.randint(low=0, high=2, size=(x_size,2)).tolist()
     p, positions = localize(colors, measurements, motions, sensor_right=0.8,p_move=0.8)
-    imgs = []
-    for pos in positions:
+
+    # experimental method
+    fig, axis = plt.subplots(nrows=x_size,ncols=y_size,figsize=(x_size*10,y_size*10))
+    for ax in axis.flatten():
+        ax.axis('off')
+
+    for idx, pos in enumerate(positions):
         img = np.copy(image)
         img[pos[0]][pos[1]] = [255.,255.,255.]
-        img = plt.imshow(img, animated=True)
-        imgs.append([img])
-    print(len(imgs))
-    fig = plt.figure()
+        # img = plt.imshow(img)
+        # imgs.append(img)
+        axis[0][idx].imshow(img)
+    plt.show()
+    # print(len(imgs))
+    # fig = plt.figure()
     #5 images with an interval of 100 milliseconds repeating every 500 milliseconds
     
-    ani = animation.ArtistAnimation(fig, imgs, interval=50, blit=True, repeat_delay=1000)
+    # ani = animation.ArtistAnimation(fig, imgs, interval=200, blit=True, repeat_delay=1000)
     # ani.save('dynamic_images.mp4')
-    plt.show()
+    
+
+    
 if __name__ == '__main__':
     main()
     
