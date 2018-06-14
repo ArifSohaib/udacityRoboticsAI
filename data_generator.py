@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np 
 
-def createWorld(size_x = 100, size_y=100):
+def create_world(size_x = 100, size_y=100):
     """
     creates randomized colors of shape size_x by size_y
     args:
@@ -37,12 +37,8 @@ def createWorld(size_x = 100, size_y=100):
     RGB = np.array(RGB).reshape(size_x,size_y,3)
     return RGB, colors
 
-def mark_vals(colors, preds):
-    for i in range(len(colors[0])):
-        for j in range(len(colors[1])):
-            pass
 def main():
-    RGB, _ = createWorld(10,10)
+    RGB, _ = create_world(10,10)
 
     plt.imshow(RGB,cmap='Accent')
 
