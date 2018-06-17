@@ -22,3 +22,10 @@ implements particle filter that can do rotation
 
 ###### My Addition:
 TODO: Visualization
+
+##### search_init.py
+initial search algorithm.
+Worse case complexity is O(n^2)
+
+###### My Addition:
+slightly different algorithm that also passes all test cases
