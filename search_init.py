@@ -17,9 +17,9 @@
 
 grid = [[0, 0, 1, 0, 0, 0],
         [0, 0, 1, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0],
         [0, 0, 1, 0, 1, 0],
-        [0, 0, 1, 0, 1, 0],
-        [0, 0, 0, 0, 0, 0]]
+        [0, 0, 1, 0, 0, 0]]
 init = [0, 0]
 goal = [len(grid)-1, len(grid[0])-1]
 cost = 1
@@ -45,15 +45,13 @@ def search(grid,init,goal,cost):
     pos = None
 
     while pos != goal:
+        if len(openlist) == 0:
+            break
         print("exploring grid[{}]".format(pos))
         print(gVal)
-        pos = openlist[-1]
-        closedlist[pos[0]][pos[1]] = 1
+        pos = openlist.pop()
         gVal +=1 
-        if gVal == len(grid) * len(grid[0]):
-            break
         for d in delta:
-            closedCount = 0
             chk = [pos[0] + d[0],pos[1] + d[1]]
             print("checking {}".format(chk))
             if (chk[0]) >= 0 and\
@@ -63,10 +61,7 @@ def search(grid,init,goal,cost):
             grid[chk[0]][chk[1]] != 1:
                 if closedlist[chk[0]][chk[1]] != 1:
                     openlist.append(chk)
-                else:
-                    closedCount += 1
-                if closedCount == len(delta):
-                    break
+                    closedlist[chk[0]][chk[1]] = 1
                 
     if pos != goal:
         return "fail" 
