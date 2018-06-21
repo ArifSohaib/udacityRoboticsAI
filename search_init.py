@@ -15,11 +15,11 @@
 #   0 = Navigable space
 #   1 = Occupied space
 
-grid = [[0, 0, 1, 0, 0, 0],
-        [0, 0, 1, 0, 0, 0],
-        [0, 0, 0, 0, 1, 0],
-        [0, 0, 1, 0, 1, 0],
-        [0, 0, 1, 0, 0, 0]]
+grid = [[0, 0, 0, 1, 1],
+        [0, 1, 0, 0, 0],
+        [0, 1, 0, 1, 0],
+        [0, 1, 0, 1, 0],
+        [0, 0, 0, 0, 0]]
 init = [0, 0]
 goal = [len(grid)-1, len(grid[0])-1]
 cost = 1
@@ -40,20 +40,28 @@ def search(grid,init,goal,cost):
     openlist = []
     openlist.append(init)
     closedlist = [[0 for row in range(len(grid[0]))] for col in range(len(grid))]
+    expand = [[-1 for row in range(len(grid[0]))] for col in range(len(grid))]
+    
+    action = [[-1 for row in range(len(grid[0]))] for col in range(len(grid))]
+    
     closedlist[init[0]][init[1]] = 1
+    
     gVal = 0
     pos = None
 
     while pos != goal:
         if len(openlist) == 0:
             break
-        print("exploring grid[{}]".format(pos))
-        print(gVal)
+        # print("exploring grid[{}]".format(pos))
+        # print(gVal)
+        openlist.sort()
+        openlist.reverse()
         pos = openlist.pop()
         gVal +=1 
-        for d in delta:
+        expand[pos[0]][pos[1]] = gVal
+        for idx, d in enumerate(delta):
             chk = [pos[0] + d[0],pos[1] + d[1]]
-            print("checking {}".format(chk))
+            # print("checking {}".format(chk))
             if (chk[0]) >= 0 and\
             (chk[1]) >= 0 and \
             (chk[0]) != len(grid) and\
@@ -62,9 +70,29 @@ def search(grid,init,goal,cost):
                 if closedlist[chk[0]][chk[1]] != 1:
                     openlist.append(chk)
                     closedlist[chk[0]][chk[1]] = 1
-                
-    if pos != goal:
-        return "fail" 
-    else:
-        return [gVal, pos[0], pos[1]]
-print(search(grid, init, goal, cost))
+                    #action[x][y] now contains the index of the delta action that gets to the new list
+                    action[chk[0]][chk[1]] = idx
+    
+    x = goal[0]
+    y = goal[1]
+    path = [[' ' for row in range(len(grid[0]))] for col in range(len(grid))]
+    path[x][y] = '*'
+    while x != init[0] and y != init[1]:
+        x2 = x - delta[action[x][y]][0]
+        y2 = y - delta[action[x][y]][1]
+        path[x2][y2] = delta_name[action[x][y]]
+        x = x2
+        y = y2
+    return path                
+
+
+def print2dGrid(grid):
+    for row in range(len(grid)):
+        print(grid[row])
+def main():        
+    expand=  search(grid, init, goal, cost)
+    # print(result)
+    print2dGrid(expand)
+
+if __name__ == '__main__':
+    main()
