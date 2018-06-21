@@ -77,7 +77,7 @@ def search(grid,init,goal,cost):
     y = goal[1]
     path = [[' ' for row in range(len(grid[0]))] for col in range(len(grid))]
     path[x][y] = '*'
-    while x != init[0] and y != init[1]:
+    while x != init[0] or y != init[1]:
         x2 = x - delta[action[x][y]][0]
         y2 = y - delta[action[x][y]][1]
         path[x2][y2] = delta_name[action[x][y]]
