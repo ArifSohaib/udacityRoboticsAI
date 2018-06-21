@@ -73,16 +73,13 @@ def search(grid,init,goal,cost):
                     #action[x][y] now contains the index of the delta action that gets to the new list
                     action[chk[0]][chk[1]] = idx
     
-    x = goal[0]
-    y = goal[1]
+    prev = [goal[0],goal[1]]
     path = [[' ' for row in range(len(grid[0]))] for col in range(len(grid))]
-    path[x][y] = '*'
-    while x != init[0] or y != init[1]:
-        x2 = x - delta[action[x][y]][0]
-        y2 = y - delta[action[x][y]][1]
-        path[x2][y2] = delta_name[action[x][y]]
-        x = x2
-        y = y2
+    path[prev[0]][prev[1]] = '*'
+    while prev[0] != init[0] or prev[1] != init[1]:
+        nxt = [prev[0] - delta[action[prev[0]][prev[1]]][0], prev[1] - delta[action[prev[0]][prev[1]]][1]]
+        path[nxt[0]][nxt[1]] = delta_name[action[prev[0]][prev[1]]]
+        prev = nxt
     return path                
 
 
