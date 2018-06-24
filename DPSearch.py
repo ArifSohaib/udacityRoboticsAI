@@ -25,37 +25,30 @@ delta = [[-1, 0 ], # go up
 delta_name = ['^', '<', 'v', '>']
 
 def compute_value(grid,goal,cost):
-    #if value is 999, it is unopened
     value = [[99 for row in range(len(grid[0]))] for col in range(len(grid))]
-    closedlist = [[0 for row in range(len(grid[0]))] for col in range(len(grid))]
-    #start with goal stat
-    x = goal[0]
-    y = goal[1]
-    openlist = [[x,y]]
-    #print("goal: {}".format(goal))
-    #set value of goal to 0
-    value[x][y] = 0
-    while True:
-        val = openlist.pop()
-        x = val[0]
-        y = val[1]
-        #print("exploring: [{},{}]".format(x,y))
-        for i in range(len(delta)):
-            x2 = x + delta[i][0]
-            y2 = y + delta[i][1]
-            if x2 >= 0 and x2 < len(grid) and y2 >=0 and y2 < len(grid[0]):
-                if grid[x2][y2] != 1 and closedlist[x2][y2] != 1:
-                    value[x2][y2] = min(value[x][y] + cost, value[x2][y2])
-                    x = x2
-                    y = y2
-                    openlist.append([x,y])
-                    closedlist[x][y] = 1
-                    #print("added: [{},{}]".format(x,y))
-                    #print(openlist)
-        
-        if len(openlist) == 0:
-            break
-    return value 
+    policy = [[' ' for row in range(len(grid[0]))] for col in range(len(grid))]
+
+    change = True
+    while change:
+        change = False
+        for x in range(len(grid)):
+            for y in range(len(grid[0])):
+                if x == goal[0] and y == goal[1]:
+                    if value[x][y] > 0:
+                        change = True
+                        value[x][y] = 0
+                        policy[x][y] = "*"
+                elif grid[x][y] == 0:
+                    for i in range(len(delta)):
+                        x2 = x + delta[i][0]
+                        y2 = y + delta[i][1]
+                        if x2 >= 0 and x2 < len(grid) and y2 >= 0 and y2 < len(grid[0]):
+                            v2 = value[x2][y2] + cost
+                            if v2 < value[x][y]:
+                                change = True
+                                value[x][y] = v2 
+                                policy[x][y] = delta_name[i]
+    return policy
 
 for val in compute_value(grid, goal, cost):
     print(val)
