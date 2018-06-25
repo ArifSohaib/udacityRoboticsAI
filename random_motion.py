@@ -50,25 +50,30 @@ def stochastic_value(grid,goal,cost_step,collision_cost,success_prob):
                         policy[x][y] = '*'
                         change = True
                 elif grid[x][y] == 0:
-                    for i in range(len(delta)):
-                        x2 = x + delta[i][0]
-                        y2 = y + delta[i][1]
-                    if x2 >= 0 and x2 < len(grid) and y2 >= 0 and y2 < len(grid[0]) and grid[x2][y2] == 0:
-                        v2s = value[x2][y2] 
-                        v2f = 0.0
-                        for i2 in range(len(delta)):
-                            if i != i2:
-                                x3 = x + delta[i2][0]
-                                y3 = y + delta[i2][1]
-                                if x3 >= 0 and x3 < len(grid) and y3 >= 0 and y3 < len(grid[0]) and grid[x3][y3] == 0 and [x3,y3] != [x,y] and [x3,y3] != [x2,y2]:
-                                    v2f += collision_cost
-                        v2 = cost_step + (success_prob * v2s) + (failure_prob * v2f)
-                        # print(v2)
-                        if v2 < value[x][y]:
-                            value[x][y] = v2
-                            policy[x][y] = delta_name[i]
-                            change = True
+                    #the policy value must consider all the ways a something could reach the failure part of the grid
+                    for action in range(len(delta)):
+                        v2 = cost_step
+                        for i in range(-1,2):
+                            a2 = (action + i) % len(delta)
+                            x2 = x + delta[a2][0]
+                            y2 = y + delta[a2][1]
 
+                            if i == 0:
+                                p2 = success_prob
+                            else:
+                                p2 = (1.0 - success_prob) / 2.0
+                            if x2 >= 0 and x2 < len(grid) and y2 >= 0 and y2 < len(grid[0]) and grid[x2][y2] == 0:
+                                #successfully reached [x2][y2] from [x][y]
+                                v2 += p2 * value[x2][y2]
+                            else:
+                                #did not reach [x2][y2] so pay the collission cost
+                                v2 += p2 * collision_cost
+                        
+                        if v2 < value[x][y]:
+                            change = True
+                            value[x][y] = v2
+                            policy[x][y] = delta_name[action]
+                        
         
     return value, policy
 
