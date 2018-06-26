@@ -101,22 +101,24 @@ class Robot(object):
 # run - does a single control run
 robot = Robot()
 robot.set(0.0, 1.0, 0.0)
-
-def run(robot, tau_p, tau_d, n=100, speed=1.0):
+robot.set_steering_drift(10.0/180.0 * np.pi)
+def run(robot, tau_p, tau_d, tau_i, n=100, speed=1.0):
     x_trajectory = []
     y_trajectory = []
     cte = robot.y
+    sumCte = 0
     for i in range(n):
         cteD = robot.y - cte
         cte = robot.y
-        steer = (-tau_p * cte) - (tau_d * cteD)
+        sumCte += cte
+        steer = (-tau_p * cte) - (tau_d * cteD) - (tau_i * sumCte)
         robot.move(steer, speed)
         x_trajectory.append(robot.x)
         y_trajectory.append(robot.y)
         cteD = cte - robot.y
     return x_trajectory, y_trajectory
     
-x_trajectory, y_trajectory = run(robot, 0.1, 3.0)
+x_trajectory, y_trajectory = run(robot, 0.1, 3.0, 0.004)
 n = len(x_trajectory)
 
 # fig, ax1 = plt.subplots(2, 1, figsize=(8, 8), sharey=True)
