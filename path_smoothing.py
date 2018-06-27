@@ -19,8 +19,8 @@ from copy import deepcopy
 # thank you to EnTerr for posting this on our discussion forum
 def printpaths(path,newpath):
     for old,new in zip(path,newpath):
-        print '['+ ', '.join('%.3f'%x for x in old) + \
-               '] -> ['+ ', '.join('%.3f'%x for x in new) +']'
+        print ('['+ ', '.join('%.3f'%x for x in old) + \
+               '] -> ['+ ', '.join('%.3f'%x for x in new) +']')
 
 # Don't modify path inside your function.
 path = [[0, 0],
@@ -33,20 +33,50 @@ path = [[0, 0],
         [4, 3],
         [4, 4]]
 
-def smooth(path, weight_data = 0.5, weight_smooth = 0.1, tolerance = 0.000001):
+def smooth_circular(path, weight_data = 0.1, weight_smooth = 0.5, tolerance = 0.001):
 
+    # Make a deep copy of path into newpath
+    newpath = deepcopy(path)
+
+    change = tolerance
+    while change >= tolerance:
+        change = 0.0
+        for i in range(len(path)):
+            for j in range(len(path[0])):
+                prevPath = newpath[i][j]
+                newpath[i][j] += (weight_data * (path[i][j] - newpath[i][j])) + (weight_smooth * (newpath[(i-1)%len(path)][j] + newpath[(i+1)%len(path)][j] - (2.0 * newpath[i][j])))
+            change += abs(prevPath - newpath[i][j])
+    return newpath 
+
+def smooth(path, weight_data = 0.5, weight_smooth = 0.1, tolerance = 0.001):
+    
     # Make a deep copy of path into newpath
     newpath = deepcopy(path)
 
     #######################
     ### ENTER CODE HERE ###
     #######################
-    count = 0
-    while count < 10:
+    change = tolerance
+    while change >= tolerance:
+        change = 0.0
         for i in range(1,len(path)-1):
             for j in range(len(path[0])):
+                aux = newpath[i][j]
                 newpath[i][j] += weight_data * (path[i][j] - newpath[i][j]) + weight_smooth * (newpath[i-1][j] + newpath[i+1][j] - 2.0 * newpath[i][j])
-        count+=1
+                change += abs(aux - newpath[i][j])
+        print(change)
     return newpath # Leave this line for the grader!
 
-printpaths(path,smooth(path))
+print("smoothed path")
+printpaths(path,smooth(path,0.1,0.3))
+print("circular smooth path")
+printpaths(path,smooth_circular(path,0.1,0.3))
+
+import matplotlib.pyplot as plt 
+newpathc = smooth_circular(path,0.1,0.3)
+newpath = smooth(path,0.1,0.5)
+
+plt.plot(newpath)
+plt.show()
+plt.plot(newpathc)
+plt.show()
