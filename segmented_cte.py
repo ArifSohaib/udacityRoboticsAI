@@ -61,7 +61,7 @@ class plan:
 
 
         if self.heuristic == []:
-            raise ValueError, "Heuristic must be defined to run A*"
+            raise(ValueError, "Heuristic must be defined to run A*")
 
         # internal motion parameters
         delta = [[-1,  0], # go up
@@ -98,7 +98,7 @@ class plan:
             # check if we still have elements on the open list
             if len(open) == 0:
                 resign = True
-                print '###### Search terminated without success'
+                print('###### Search terminated without success')
                 
             else:
                 # remove node from list
@@ -113,7 +113,7 @@ class plan:
 
             if x == goal[0] and y == goal[1]:
                 found = True
-                # print '###### A* search successful'
+                # print('###### A* search successful')
 
             else:
                 # expand winning element and add to new open list
@@ -166,7 +166,7 @@ class plan:
                tolerance = 0.000001):
 
         if self.path == []:
-            raise ValueError, "Run A* first before smoothing path"
+            raise(ValueError, "Run A* first before smoothing path")
 
         self.spath = [[0 for row in range(len(self.path[0]))] \
                            for col in range(len(self.path))]
@@ -513,13 +513,13 @@ def run(grid, goal, spath, params, printflag = False, speed = 0.1, timeout = 100
         filter.sense(Z)
 
         if not myrobot.check_collision(grid):
-            print '##### Collision ####'
+            print('##### Collision ####')
 
         err += (cte ** 2)
         N += 1
 
         if printflag:
-            print myrobot, cte, index, u
+            print(myrobot, cte, index, u)
 
     return [myrobot.check_goal(goal), myrobot.num_collisions, myrobot.num_steps]
 
@@ -571,8 +571,8 @@ p_gain            = 2.0
 d_gain            = 6.0
 
     
-print main(grid, init, goal, steering_noise, distance_noise, measurement_noise, 
-           weight_data, weight_smooth, p_gain, d_gain)
+print(main(grid, init, goal, steering_noise, distance_noise, measurement_noise, 
+           weight_data, weight_smooth, p_gain, d_gain))
 
 
 
@@ -597,7 +597,7 @@ def twiddle(init_params):
         else:
             best_error += 99999
     best_error = float(best_error) / float(k+1)
-    print best_error
+    print(best_error)
 
     n = 0
     while sum(dparams) > 0.0000001:
@@ -612,7 +612,7 @@ def twiddle(init_params):
                     err += ret[1] * 100 + ret[2]
                 else:
                     err += 99999
-            print float(err) / float(k+1)
+            print(float(err) / float(k+1))
             if err < best_error:
                 best_error = float(err) / float(k+1)
                 dparams[i] *= 1.1
@@ -627,7 +627,7 @@ def twiddle(init_params):
                         err += ret[1] * 100 + ret[2]
                     else:
                         err += 99999
-                print float(err) / float(k+1)
+                print(float(err) / float(k+1))
                 if err < best_error:
                     best_error = float(err) / float(k+1)
                     dparams[i] *= 1.1
@@ -635,8 +635,8 @@ def twiddle(init_params):
                     params[i] += dparams[i]
                     dparams[i] *= 0.5
         n += 1
-        print 'Twiddle #', n, params, ' -> ', best_error
-    print ' '
+        print('Twiddle #', n, params, ' -> ', best_error)
+    print(' ')
     return params
 
 
